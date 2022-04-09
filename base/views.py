@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from multiprocessing import context
+from django.shortcuts import render , redirect
 from django.http import HttpResponse, HttpResponseForbidden
+
+from .forms import RoomForm
 from .models import Room
 # Create your views here.
 
@@ -32,3 +35,14 @@ def room(request,pk):
     room = Room.objects.get(id=pk)
     context={'room': room}
     return render(request, 'room.html',context)
+
+def create_room(request):
+        form = RoomForm()
+        if request.method == 'POST':
+                form = RoomForm(request.POST)
+                if form.is_valid():
+                        form.save()
+                        return redirect('home')
+
+        context={'form': form}
+        return(render(request, 'base/room_form.html', context))
